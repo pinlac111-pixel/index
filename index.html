@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marc Gabriel Pinlac — Video Editor</title>
+<meta name="description" content="Marc Gabriel Pinlac — Video Editor. Broadcast production, documentary filmmaking, and narrative storytelling.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --cream:#F3ECE0;
+    --cream-light:#FAF6EF;
+    --tan:#C89B6C;
+    --terracotta:#B57C4E;
+    --brown-dark:#2A2118;
+    --brown-mid:#6E5D49;
+    --gold-line:#C9A876;
+    --sprocket:#E3D8C4;
+    --nav-h:88px;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{background:var(--cream);}
+  body{
+    background:var(--cream);
+    color:var(--brown-dark);
+    font-family:'Cormorant Garamond', serif;
+    overflow-x:hidden;
+    cursor:default;
+  }
+  ::selection{background:var(--tan);color:var(--cream-light);}
+
+  h1,h2,h3,.display{
+    font-family:'Playfair Display', serif;
+    font-weight:500;
+    letter-spacing:-0.01em;
+    line-height:1.05;
+  }
+  .eyebrow{
+    font-family:'Inter', sans-serif;
+    font-size:12px;
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    color:var(--terracotta);
+    font-weight:600;
+  }
+  .nav-font{font-family:'Inter', sans-serif; font-size:12.5px; letter-spacing:0.16em; text-transform:uppercase; font-weight:500;}
+  a{color:inherit; text-decoration:none;}
+  img{display:block; max-width:100%;}
+
+  /* ---------- NAV ---------- */
+  nav{
+    position:fixed; top:0; left:0; width:100%; height:var(--nav-h);
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 56px;
+    z-index:200;
+    mix-blend-mode:difference;
+    color:#fff;
+    transition:background .4s ease, box-shadow .4s ease;
+    background:transparent;
+  }
+  nav.nav-scrolled{
+    mix-blend-mode:normal;
+    background:var(--cream-light);
+    color:var(--brown-dark);
+    box-shadow:0 2px 24px rgba(42,33,24,.08);
+  }
+  .logo{font-family:'Playfair Display', serif; font-size:22px; letter-spacing:0.06em;}
+  .nav-links{display:flex; gap:26px;}
+  .nav-links a{position:relative; padding-bottom:4px;}
+  .nav-links a::after{content:'';position:absolute;left:0;bottom:0;width:0;height:1px;background:currentColor;transition:width .4s cubic-bezier(.4,0,.2,1);}
+  .nav-links a:hover::after{width:100%;}
+
+  /* ---------- Additional Works subhead ---------- */
+  .subhead-major{padding:0 56px; margin-bottom:34px;}
+  .subhead-major h3{font-size:clamp(26px,3.2vw,36px); margin-bottom:10px;}
+  .subhead-major p{color:var(--brown-mid); font-size:17px; max-width:560px; line-height:1.55;}
+  @media (max-width:860px){.subhead-major{padding:0 28px;}}
+
+  /* ---------- Card thumbnails ---------- */
+  .oc-thumb{
+    position:relative; width:100%; aspect-ratio:16/9; border-radius:3px; overflow:hidden;
+    background:linear-gradient(135deg,#3a2f22,#1c150e); flex:none;
+  }
+  .oc-thumb img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;}
+  .oc-play{
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:46px; height:46px; border-radius:50%; background:rgba(0,0,0,.35); border:1px solid rgba(243,236,224,.5);
+    backdrop-filter:blur(2px);
+  }
+  .oc-play::after{content:'';display:block; width:0; height:0; border-style:solid; border-width:8px 0 8px 13px; border-color:transparent transparent transparent #F3ECE0; margin:9px auto 0 15px;}
+
+  /* ---------- SCROLL PROGRESS ---------- */
+  .progress-bar{position:fixed; top:0; left:0; height:2px; background:var(--terracotta); width:0%; z-index:300;}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative; height:100svh; width:100%;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    overflow:hidden;
+    perspective:1200px;
+  }
+  #hero-canvas{position:absolute; inset:0; width:100%; height:100%; z-index:1; opacity:.55;}
+  .marquee-wrap{
+    position:absolute; top:14%; left:0; width:100%;
+    white-space:nowrap; z-index:2; pointer-events:none;
+  }
+  .marquee-track{
+    display:inline-flex; gap:48px;
+    font-family:'Playfair Display', serif; font-style:italic;
+    font-size:clamp(48px,9vw,120px);
+    color:transparent;
+    -webkit-text-stroke:1px rgba(42,33,24,0.14);
+    will-change:transform;
+  }
+  .hero-inner{position:relative; z-index:3; text-align:center; padding:0 24px;}
+  .hero-name{
+    font-size:clamp(46px,9vw,128px);
+    color:var(--brown-dark);
+  }
+  .hero-role{
+    margin-top:18px;
+    font-family:'Inter', sans-serif; font-weight:600;
+    font-size:clamp(14px,1.6vw,20px);
+    letter-spacing:0.08em; text-transform:uppercase;
+    color:var(--terracotta);
+  }
+  .hero-sub{
+    margin-top:14px; font-size:clamp(17px,2vw,22px);
+    color:var(--brown-mid); font-weight:400;
+  }
+  .hero-tagline{
+    margin-top:34px; font-style:italic; font-size:19px; color:var(--brown-mid); opacity:.85;
+  }
+  .scroll-cue{
+    position:absolute; bottom:44px; left:50%; transform:translateX(-50%);
+    display:flex; flex-direction:column; align-items:center; gap:10px;
+    font-family:'Inter', sans-serif; font-size:11px; letter-spacing:0.22em; text-transform:uppercase; color:var(--brown-mid);
+    z-index:3;
+  }
+  .scroll-cue .line{width:1px; height:38px; background:var(--brown-mid); overflow:hidden; position:relative;}
+  .scroll-cue .line::after{content:'';position:absolute; top:-100%; left:0; width:100%; height:100%; background:var(--terracotta); animation:cue 1.8s ease-in-out infinite;}
+  @keyframes cue{0%{top:-100%;}50%{top:0%;}100%{top:100%;}}
+
+  /* ---------- SECTION SHELL ---------- */
+  section{position:relative;}
+  .section-head{padding:180px 56px 90px; max-width:900px;}
+  .section-head .eyebrow{margin-bottom:18px;}
+  .section-head h2{font-size:clamp(38px,5.2vw,64px);}
+  .section-head p{font-size:20px; color:var(--brown-mid); margin-top:20px; max-width:620px; line-height:1.5;}
+
+  /* ---------- WORK / FILMSTRIP ---------- */
+  .work-pin{height:100vh; position:relative; overflow:hidden;}
+  .reel{
+    position:absolute; inset:0;
+    display:grid; grid-template-columns:1.05fr 0.95fr;
+    align-items:center;
+    padding:0 64px;
+    gap:60px;
+  }
+  .sprockets{position:absolute; top:0; bottom:0; width:26px; display:flex; flex-direction:column; justify-content:space-evenly; z-index:5;}
+  .sprockets.left{left:0;} .sprockets.right{right:0;}
+  .sprockets span{width:14px; height:14px; border-radius:3px; background:var(--sprocket); margin:0 auto;}
+
+  .reel-frame{
+    position:relative; aspect-ratio:16/10; border-radius:2px; overflow:hidden;
+    background:linear-gradient(135deg,#3a2f22,#1c150e);
+    box-shadow:0 40px 80px -30px rgba(30,20,10,0.45);
+  }
+  .reel-frame .thumb-fill{
+    position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+    transform:scale(1.15);
+  }
+  .reel-frame .grain{position:absolute; inset:0; background:repeating-linear-gradient(0deg,rgba(255,255,255,.03) 0 1px, transparent 1px 3px); mix-blend-mode:overlay; pointer-events:none;}
+  .reel-frame .noimg{
+    position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
+    color:rgba(243,236,224,.75); font-family:'Inter',sans-serif; text-align:center; padding:20px;
+  }
+  .play-btn{
+    width:64px; height:64px; border-radius:50%; border:1px solid rgba(243,236,224,.5);
+    display:flex; align-items:center; justify-content:center; backdrop-filter:blur(2px);
+  }
+  .play-btn::after{content:'';border-style:solid; border-width:9px 0 9px 15px; border-color:transparent transparent transparent #F3ECE0; margin-left:4px;}
+  .reel-tag{
+    position:absolute; top:22px; left:22px;
+    font-family:'Inter',sans-serif; font-size:11px; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--cream-light); background:rgba(0,0,0,.35); padding:6px 12px; border-radius:20px;
+  }
+  .reel-num{
+    position:absolute; bottom:18px; right:22px;
+    font-family:'Playfair Display',serif; font-style:italic; font-size:15px; color:rgba(243,236,224,.7);
+  }
+
+  .reel-info .eyebrow{margin-bottom:14px;}
+  .reel-info h3{font-size:clamp(32px,4vw,52px); margin-bottom:16px;}
+  .reel-info .role{font-family:'Inter',sans-serif; font-size:13px; letter-spacing:.05em; color:var(--terracotta); font-weight:600; margin-bottom:6px;}
+  .reel-info .org{font-size:19px; color:var(--brown-mid); font-style:italic; margin-bottom:20px;}
+  .reel-info .desc{font-size:18px; color:var(--brown-mid); line-height:1.6; max-width:480px; margin-bottom:28px;}
+  .stat-row{display:flex; gap:34px; flex-wrap:wrap;}
+  .stat{}
+  .stat .num{font-family:'Playfair Display',serif; font-size:34px; color:var(--brown-dark);}
+  .stat .lbl{font-family:'Inter',sans-serif; font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--brown-mid); margin-top:2px;}
+
+  @media (max-width:860px){
+    .reel{grid-template-columns:1fr; padding:0 28px; gap:26px;}
+    .work-pin{height:auto; min-height:100vh; padding:120px 0 60px;}
+    .reel{position:relative;}
+  }
+
+  /* ---------- SCHOOL / REAL ESTATE PROJECTS ---------- */
+  .subhead{padding:0 56px; margin-bottom:26px;}
+  .subhead h3{font-size:26px; color:var(--brown-dark);}
+  .subhead .line{width:52px; height:2px; background:var(--terracotta); margin-top:12px;}
+
+  .vid-grid{padding:0 56px 70px; display:grid; grid-template-columns:repeat(3,1fr); gap:18px;}
+  .vid-chip{
+    display:flex; align-items:center; gap:14px; background:var(--cream-light);
+    border-radius:3px; padding:16px 18px; transition:transform .3s ease, box-shadow .3s ease;
+  }
+  .vid-chip:hover{transform:translateY(-3px); box-shadow:0 18px 34px -18px rgba(42,33,24,.25);}
+  .vid-chip .vp{
+    width:64px; height:64px; border-radius:8px; background:var(--tan); flex:none;
+    display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;
+  }
+  .vid-chip .vp img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;}
+  .vid-chip .vp::after{content:''; position:relative; z-index:2; border-style:solid; border-width:6px 0 6px 10px; border-color:transparent transparent transparent #fff; margin-left:2px; filter:drop-shadow(0 1px 3px rgba(0,0,0,.6));}
+  .vid-chip .vt{font-family:'Inter',sans-serif; font-size:14px; color:var(--brown-dark); line-height:1.3;}
+  .vid-chip .vt small{display:block; font-size:11px; color:var(--brown-mid); margin-top:3px; letter-spacing:.02em;}
+  @media (max-width:860px){.vid-grid{grid-template-columns:1fr; padding:0 28px 50px;} .subhead{padding:0 28px;}}
+
+  .proj-block{
+    padding:0 56px 70px; display:grid; grid-template-columns:1fr 1.3fr; gap:56px; align-items:start;
+  }
+  .proj-block .role{font-family:'Inter',sans-serif; font-size:13px; letter-spacing:.05em; color:var(--terracotta); font-weight:600; margin-bottom:10px;}
+  .proj-block h4{font-size:clamp(28px,3.4vw,38px); margin-bottom:16px;}
+  .proj-block p{color:var(--brown-mid); font-size:18px; line-height:1.6;}
+  .proj-videos{display:flex; flex-direction:column; gap:14px;}
+  @media (max-width:860px){.proj-block{grid-template-columns:1fr; padding:0 28px 60px; gap:24px;}}
+
+  .section-divider{height:1px; background:rgba(110,93,73,.2); margin:0 56px 70px;}
+  @media (max-width:860px){.section-divider{margin:0 28px 50px;}}
+  /* ---------- PORTFOLIO PROJECTS (org deep-dive) ---------- */
+  #portfolio-projects{background:var(--cream-light);}
+  .org-nav-wrap{position:sticky; top:var(--nav-h); z-index:50; padding:18px 56px; background:rgba(250,246,239,.85); backdrop-filter:blur(10px); border-bottom:1px solid rgba(110,93,73,.15);}
+  .org-pills{display:flex; gap:10px; flex-wrap:wrap;}
+  .org-pill{
+    font-family:'Inter',sans-serif; font-size:12.5px; letter-spacing:.04em; font-weight:500;
+    padding:10px 20px; border-radius:30px; border:1px solid rgba(110,93,73,.25); color:var(--brown-mid);
+    transition:all .35s ease; white-space:nowrap;
+  }
+  .org-pill.active{background:var(--brown-dark); color:var(--cream-light); border-color:var(--brown-dark);}
+  @media (max-width:860px){.org-nav-wrap{padding:14px 20px;} .org-pills{overflow-x:auto; flex-wrap:nowrap; -ms-overflow-style:none; scrollbar-width:none;} .org-pills::-webkit-scrollbar{display:none;}}
+
+  .org-section{padding:110px 56px 90px; border-bottom:1px solid rgba(110,93,73,.15);}
+  .org-section:last-child{border-bottom:none;}
+  .org-head{max-width:800px; margin-bottom:50px;}
+  .org-head .followers{font-family:'Inter',sans-serif; font-size:13px; color:var(--terracotta); letter-spacing:.06em; text-transform:uppercase; margin-bottom:14px;}
+  .org-head h2{font-size:clamp(32px,4.4vw,52px); margin-bottom:18px;}
+  .org-head p{font-size:19px; color:var(--brown-mid); line-height:1.6;}
+
+  .org-stats{display:flex; gap:50px; flex-wrap:wrap; margin:38px 0 54px; padding:32px 0; border-top:1px solid rgba(110,93,73,.18); border-bottom:1px solid rgba(110,93,73,.18);}
+  .org-stats .stat .num{font-size:40px;}
+
+  .org-cols{display:grid; grid-template-columns:1fr 1fr; gap:50px; margin-bottom:56px;}
+  .org-cols h3{font-size:22px; margin-bottom:18px;}
+  .resp-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  .resp-item{background:var(--cream); border-radius:3px; padding:16px 18px; font-family:'Inter',sans-serif; font-size:14.5px; color:var(--brown-mid); line-height:1.4;}
+  .role-tag{display:inline-block; font-family:'Inter',sans-serif; font-size:13px; letter-spacing:.05em; color:#fff; background:var(--terracotta); padding:8px 18px; border-radius:20px; margin-bottom:10px;}
+  @media (max-width:860px){.org-cols{grid-template-columns:1fr; gap:32px;} .resp-grid{grid-template-columns:1fr;}}
+
+  .carousel-label{font-family:'Inter',sans-serif; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--brown-mid); margin-bottom:16px;}
+  .carousel{display:flex; gap:20px; overflow-x:auto; padding-bottom:20px; cursor:grab; scroll-snap-type:x proximity; -ms-overflow-style:none; scrollbar-width:none;}
+  .carousel::-webkit-scrollbar{display:none;}
+  .carousel.dragging{cursor:grabbing; scroll-snap-type:none;}
+  .org-card{
+    flex:none; width:280px; scroll-snap-align:start; background:var(--cream); border-radius:4px; padding:24px;
+    display:flex; flex-direction:column; gap:14px; transition:transform .35s ease, box-shadow .35s ease; border:1px solid rgba(110,93,73,.12);
+  }
+  .org-card:hover{transform:translateY(-5px); box-shadow:0 24px 44px -22px rgba(42,33,24,.28);}
+  .org-card .oc-date{font-family:'Inter',sans-serif; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--tan);}
+  .org-card h4{font-size:19px; line-height:1.25;}
+  .org-card .oc-desc{font-size:15.5px; color:var(--brown-mid); line-height:1.5; flex:1;}
+  .org-card .oc-stats{display:flex; gap:16px; font-family:'Inter',sans-serif;}
+  .org-card .oc-stats div{font-size:12px; color:var(--brown-mid);}
+  .org-card .oc-stats b{display:block; font-family:'Playfair Display',serif; font-size:18px; color:var(--brown-dark); font-weight:500;}
+  .org-card .oc-link{font-family:'Inter',sans-serif; font-size:12.5px; color:var(--terracotta); font-weight:600; display:inline-flex; align-items:center; gap:5px;}
+
+  .about-wrap{padding:0 56px 160px;}
+  .about-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:50px;}
+  .about-item{padding:0;}
+  .about-item .idx{font-family:'Playfair Display',serif; font-style:italic; color:var(--tan); font-size:16px; margin-bottom:12px; display:block;}
+  .about-item h3{font-size:26px; margin-bottom:12px;}
+  .about-item p{color:var(--brown-mid); font-size:18px; line-height:1.6;}
+  @media (max-width:860px){.about-wrap{padding:0 28px 100px;} .about-grid{grid-template-columns:1fr; gap:36px;}}
+
+  /* ---------- EXPERIENCE ---------- */
+  .timeline{padding:0 56px 160px; max-width:980px;}
+  .t-row{display:grid; grid-template-columns:150px 1fr; gap:36px; position:relative;}
+  .t-line{position:relative; display:flex; justify-content:center;}
+  .t-line::before{content:'';position:absolute; top:6px; bottom:-40px; width:1px; background:rgba(201,168,118,.35);}
+  .t-row:last-child .t-line::before{display:none;}
+  .t-dot{width:9px; height:9px; border-radius:50%; background:var(--terracotta); margin-top:8px; position:relative; z-index:2;}
+  .t-date{font-family:'Inter',sans-serif; font-size:12px; letter-spacing:.08em; color:var(--brown-mid); margin-top:4px; text-align:center;}
+  .t-card{background:var(--cream-light); border-radius:3px; padding:30px 32px; margin-bottom:40px;}
+  .t-card h3{font-size:24px; margin-bottom:6px;}
+  .t-card .org{color:var(--terracotta); font-style:italic; font-size:18px; margin-bottom:2px;}
+  .t-card .place{color:var(--brown-mid); font-size:15px; font-family:'Inter',sans-serif; margin-bottom:14px;}
+  .t-card p{color:var(--brown-mid); font-size:17px; line-height:1.55;}
+  @media (max-width:700px){.timeline{padding:0 20px 100px;} .t-row{grid-template-columns:60px 1fr; gap:16px;}}
+
+  /* ---------- AWARDS ---------- */
+  .awards{padding:0 56px 160px; display:grid; grid-template-columns:1fr 1fr; gap:28px;}
+  .award-card{
+    background:var(--brown-dark); color:var(--cream-light); border-radius:3px; padding:44px;
+    display:flex; flex-direction:column; gap:18px; min-height:220px; justify-content:space-between;
+  }
+  .award-card .yr{font-family:'Inter',sans-serif; font-size:12px; letter-spacing:.16em; color:var(--tan); text-transform:uppercase;}
+  .award-card h3{font-size:26px; color:var(--cream-light);}
+  .award-card p{font-family:'Cormorant Garamond',serif; font-size:17px; color:#D8CBB6; line-height:1.5;}
+  .award-link{display:inline-flex; align-items:center; gap:6px; font-family:'Inter',sans-serif; font-size:13px; font-weight:600; color:var(--tan); margin-top:6px;}
+  .award-link:hover{color:var(--cream-light);}
+  @media (max-width:700px){.awards{grid-template-columns:1fr; padding:0 24px 100px;}}
+
+  /* ---------- CAPABILITIES ---------- */
+  .caps{padding:0 56px 160px; display:grid; grid-template-columns:1fr 1fr; gap:60px;}
+  .caps-col .idx{
+    width:44px; height:44px; border-radius:8px; background:var(--tan); color:var(--cream-light);
+    display:flex; align-items:center; justify-content:center; font-family:'Playfair Display',serif; margin-bottom:22px;
+  }
+  .caps-col h3{font-size:26px; margin-bottom:20px;}
+  .caps-col ul{list-style:none;}
+  .caps-col li{padding:12px 0; border-top:1px solid rgba(110,93,73,.18); color:var(--brown-mid); font-size:18px;}
+  @media (max-width:700px){.caps{grid-template-columns:1fr; padding:0 24px 100px; gap:40px;}}
+
+  /* ---------- CONTACT ---------- */
+  .contact{padding:0 56px 140px; display:grid; grid-template-columns:1fr 1fr; gap:44px; align-items:stretch;}
+  .contact-left h2{font-size:clamp(42px,6vw,74px); margin-bottom:20px;}
+  .contact-left p{color:var(--brown-mid); font-size:19px; max-width:440px; margin-bottom:36px; line-height:1.5;}
+  .contact-item{
+    background:var(--cream-light); border-radius:3px; padding:20px 24px; margin-bottom:14px;
+    display:flex; align-items:center; gap:16px;
+  }
+  .contact-item .ico{width:44px; height:44px; border-radius:8px; background:var(--tan); flex:none; display:flex; align-items:center; justify-content:center; color:#fff; font-family:'Inter',sans-serif; font-size:16px;}
+  .contact-item .lbl{font-family:'Inter',sans-serif; font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--terracotta); margin-bottom:2px;}
+  .contact-item .val{font-size:18px; font-family:'Inter',sans-serif; color:var(--brown-dark);}
+  .contact-right{
+    background:var(--brown-dark); color:var(--cream-light); border-radius:4px; padding:56px 48px;
+    display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; gap:18px;
+  }
+  .contact-right h3{font-size:clamp(28px,3.4vw,40px); color:var(--cream-light);}
+  .contact-right p{color:#D8CBB6; font-size:18px; max-width:340px;}
+  .cta-btn{
+    margin-top:10px; background:var(--terracotta); color:#fff; font-family:'Inter',sans-serif;
+    font-size:14px; letter-spacing:.04em; padding:16px 34px; border-radius:30px; display:inline-flex; align-items:center; gap:8px;
+    transition:transform .35s cubic-bezier(.4,0,.2,1), background .35s;
+  }
+  .cta-btn:hover{transform:translateY(-3px); background:#9C6B41;}
+  @media (max-width:860px){.contact{grid-template-columns:1fr; padding:0 24px 100px;}}
+
+  footer{padding:50px 56px; display:flex; justify-content:space-between; align-items:center; border-top:1px solid rgba(110,93,73,.2); font-family:'Inter',sans-serif; font-size:13px; color:var(--brown-mid);}
+  .connect-btn{display:inline-flex; align-items:center; gap:8px; background:var(--cream-light); padding:10px 18px; border-radius:24px; font-size:13px;}
+  @media (max-width:700px){footer{flex-direction:column; gap:16px; padding:40px 24px; text-align:center;}}
+
+  .reveal{opacity:0; transform:translateY(40px);}
+
+  @media (prefers-reduced-motion: reduce){
+    * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<nav>
+  <div class="logo">MGP</div>
+  <div class="nav-links nav-font">
+    <a href="#portfolio-projects">Portfolio</a>
+    <a href="#additional-works">Additional Works</a>
+    <a href="#about">About</a>
+    <a href="#experience">Experience</a>
+    <a href="#awards">Awards</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="hero">
+  <canvas id="hero-canvas"></canvas>
+  <div class="marquee-wrap">
+    <div class="marquee-track" id="marquee">
+      <span>Editor&nbsp;•&nbsp;Storyteller&nbsp;•&nbsp;Creative&nbsp;Leader&nbsp;•&nbsp;Documentary&nbsp;•&nbsp;</span>
+      <span>Editor&nbsp;•&nbsp;Storyteller&nbsp;•&nbsp;Creative&nbsp;Leader&nbsp;•&nbsp;Documentary&nbsp;•&nbsp;</span>
+    </div>
+  </div>
+  <div class="hero-inner">
+    <h1 class="hero-name">Marc Gabriel Pinlac</h1>
+    <div class="hero-role">Video Editor</div>
+    <p class="hero-sub">Broadcast Production Specialist, Documentary Filmmaker &amp; Creative Production Leader</p>
+    <p class="hero-tagline">Crafting stories that resonate, one frame at a time</p>
+  </div>
+  <div class="scroll-cue"><span>Explore Portfolio</span><div class="line"></div></div>
+</section>
+
+<!-- ============ PORTFOLIO PROJECTS ============ -->
+<section id="portfolio-projects">
+  <div class="section-head reveal">
+    <div class="eyebrow">Deep Dive</div>
+    <h2>Portfolio Projects</h2>
+    <p>A full breakdown of the channels and organizations I've edited for — audience, role, and the complete body of work behind each one.</p>
+  </div>
+
+  <div class="org-nav-wrap">
+    <div class="org-pills">
+      <a href="#org-laverdad" class="org-pill" data-org="org-laverdad">La Verdad Broadcasting Society</a>
+      <a href="#org-untv" class="org-pill" data-org="org-untv">UNTV — Tulong Muna Bago Balita</a>
+      <a href="#org-xtrajectory" class="org-pill" data-org="org-xtrajectory">The X Trajectory</a>
+      <a href="#org-dswd" class="org-pill" data-org="org-dswd">DSWD Pag-abot Program</a>
+    </div>
+  </div>
+
+  <!-- ORG 1 — La Verdad Broadcasting Society -->
+  <div class="org-section" id="org-laverdad">
+    <div class="org-head reveal">
+      <div class="followers">9K Followers · Facebook</div>
+      <h2>La Verdad Broadcasting Society</h2>
+      <p>Lead Video Editor producing promotional reels, broadcast-style news packages, and event coverage — transforming raw footage into polished broadcast content through structured storytelling, dynamic pacing, and audience-focused editing. Several productions exceeded the page's own follower base, with the highest-performing video reaching 256% of it.</p>
+    </div>
+
+    <div class="org-cols reveal">
+      <div>
+        <span class="role-tag">Lead Video Editor</span>
+        <h3>Role</h3>
+        <p style="color:var(--brown-mid); font-size:17px; line-height:1.6;">Working editor across four consecutive school years — turning raw event footage into broadcast-ready news packages and promotional reels for a 9K-follower page.</p>
+      </div>
+      <div>
+        <h3>Responsibilities</h3>
+        <div class="resp-grid">
+          <div class="resp-item">Promotional reels &amp; broadcast news packages</div>
+          <div class="resp-item">Event coverage &amp; narrative structure</div>
+          <div class="resp-item">Dynamic pacing, audience-focused editing</div>
+          <div class="resp-item">Raw footage → polished broadcast content</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="carousel-label">Featured Reels — Highest to Lowest Views</div>
+    <div class="carousel" data-carousel>
+      <div class="org-card">
+        <div class="oc-thumb"><img src="assets/thumbs/laverdad-intramurals-2.jpg" loading="lazy" alt="La Verdad Intramurals #2"></div>
+        <div class="oc-date">Dec 18, 2024</div>
+        <h4>La Verdad Intramurals #2</h4>
+        <p class="oc-desc">Broadcast-style news package covering the Intramurals — impactful moments and fast-paced editing to keep viewers engaged.</p>
+        <div class="oc-stats"><div><b>23K</b>Views</div><div><b>990</b>Reactions</div><div><b>256%</b>Reach</div></div>
+        <a href="https://www.facebook.com/reel/991683006316015" target="_blank" rel="noopener" class="oc-link">Watch Reel →</a>
+      </div>
+      <div class="org-card">
+        <div class="oc-thumb"><img src="assets/thumbs/laverdad-intramurals-1.jpg" loading="lazy" alt="La Verdad Intramurals #1"></div>
+        <div class="oc-date">Dec 11, 2024</div>
+        <h4>La Verdad Intramurals #1</h4>
+        <p class="oc-desc">Broadcast news package documenting Intramurals highlights — student athletes and competition energy.</p>
+        <div class="oc-stats"><div><b>22K</b>Views</div><div><b>1.1K</b>Reactions</div><div><b>244%</b>Reach</div></div>
+        <a href="https://www.facebook.com/reel/435886019576850" target="_blank" rel="noopener" class="oc-link">Watch Reel →</a>
+      </div>
+      <div class="org-card">
+        <div class="oc-thumb"><img src="assets/thumbs/metapora.jpg" loading="lazy" alt="METAPORA — Gawad Alternatibo"></div>
+        <div class="oc-date">Jan 2, 2026</div>
+        <h4>METAPORA — Gawad Alternatibo</h4>
+        <p class="oc-desc">Cinematic promotional reel documenting the journey to the 36th Gawad Alternatibo Film Festival.</p>
+        <div class="oc-stats"><div><b>10K</b>Views</div><div><b>475</b>Reactions</div><div><b>111%</b>Reach</div></div>
+        <a href="https://www.facebook.com/reel/853788890621950" target="_blank" rel="noopener" class="oc-link">Watch Reel →</a>
+      </div>
+      <div class="org-card">
+        <div class="oc-thumb"><img src="assets/thumbs/laverdad-intramurals-3.jpg" loading="lazy" alt="La Verdad Intramurals #3"></div>
+        <div class="oc-date">Jan 16, 2026</div>
+        <h4>La Verdad Intramurals #3</h4>
+        <p class="oc-desc">Comprehensive broadcast package covering the 2026 Intramurals — student-athletes and competitive moments.</p>
+        <div class="oc-stats"><div><b>6.4K</b>Views</div><div><b>277</b>Reactions</div><div><b>71%</b>Reach</div></div>
+        <a href="https://www.facebook.com/reel/2750171972015388" target="_blank" rel="noopener" class="oc-link">Watch Reel →</a>
+      </div>
+      <div class="org-card">
+        <div class="oc-thumb"><img src="assets/thumbs/writers-workshop.jpg" loading="lazy" alt="Writers Workshop"></div>
+        <div class="oc-date">May 6, 2025</div>
+        <h4>Writers Workshop</h4>
+        <p class="oc-desc">Promotional reel encouraging student participation in a campus-wide creative writing workshop.</p>
+        <div class="oc-stats"><div><b>3.5K</b>Views</div><div><b>182</b>Reactions</div><div><b>39%</b>Reach</div></div>
+        <a href="https://www.facebook.com/share/v/1Xz1hDPLTD/" target="_blank" rel="noopener" class="oc-link">Watch Reel →</a>
+      </div>
+      <div class="org-card">
+        <div class="oc-thumb"><img src="assets/thumbs/commweek-9.jpg" loading="lazy" alt="CommWeek Year 9 Preparations"></div>
+        <div class="oc-date">Oct 29, 2025</div>
+        <h4>CommWeek Year 9 Preparations</h4>
+        <p class="oc-desc">Behind-the-scenes promotional reel showcasing prep for the annual Broadcasting celebration.</p>
+        <div class="oc-stats"><div><b>3.2K</b>Views</div><div><b>137</b>Reactions</div><div><b>36%</b>Reach</div></div>
+        <a href="https://www.facebook.com/reel/1363144338867814" target="_blank" rel="noopener" class="oc-link">Watch Reel →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ORG 2 — UNTV -->
+  <div class="org-section" id="org-untv">
+    <div class="org-head reveal">
+      <div class="followers">106K Followers · Facebook</div>
+      <h2>UNTV — Tulong Muna Bago Balita</h2>
+      <p>Fast-turnaround news reels covering developing weather situations, rescue operations, and community impacts across the Philippines — balancing speed, accuracy, and storytelling under tight deadlines while maintaining the credibility and urgency expected from a news organization.</p>
+    </div>
+
+    <div class="org-cols reveal">
+      <div>
+        <span class="role-tag">Volunteer Video Editor</span>
+        <h3>Role</h3>
+        <p style="color:var(--brown-mid); font-size:17px; line-height:1.6;">Contributing editor for time-sensitive national broadcast segments — turning field footage into fast, credible news content for a 106K-follower audience.</p>
+      </div>
+      <div>
+        <h3>Responsibilities</h3>
+        <div class="resp-grid">
+          <div class="resp-item">Fast-turnaround reels (1–2 hour deadlines)</div>
+          <div class="resp-item">Weather &amp; rescue operation coverage</div>
+          <div class="resp-item">Speed, accuracy &amp; storytelling under pressure</div>
+          <div class="resp-item">Field footage → social-ready news content</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="carousel-label">Featured Reels — Highest to Lowest Views</div>
+    <div class="carousel" data-carousel>
+      <div class="org-card">
+        <div class="oc-thumb"><img src="assets/thumbs/untv-emong-rescue.jpg" loading="lazy" alt="Typhoon Emong — Rescue Operation"></div>
+        <div class="oc-date">Jul 25, 2025 · 2-Hr Turnaround</div>
+        <h4>Typhoon Emong — Rescue Operation</h4>
+        <p class="oc-desc">Fast-paced rescue operation reel highlighting UNTV volunteer efforts during Typhoon Emong.</p>
+        <div class="oc-stats"><div><b>13K</b>Views</div><div><b>705</b>Reactions</div><div><b>12.3%</b>Reach</div></div>
+        <a href="https://www.facebook.com/reel/1769900980273368" target="_blank" rel="noopener" class="oc-link">Watch Reel →</a>
+      </div>
+      <div class="org-card">
+        <div class="oc-thumb"><img src="assets/thumbs/untv-habagat-4.jpg" loading="lazy" alt="Hanging Habagat Status Report #4"></div>
+        <div class="oc-date">Jul 21, 2025 · 1-Hr Turnaround</div>
+        <h4>Hanging Habagat Status Report #4</h4>
+        <p class="oc-desc">Compilation-based weather reel on the continued effects of the Southwest Monsoon.</p>
+        <div class="oc-stats"><div><b>12K</b>Views</div><div><b>438</b>Reactions</div><div><b>11.3%</b>Reach</div></div>
+        <a href="https://www.facebook.com/reel/1998679770977650" target="_blank" rel="noopener" class="oc-link">Watch Reel →</a>
+      </div>
+      <div class="org-card">
+        <div class="oc-thumb"><img src="assets/thumbs/untv-habagat-5.jpg" loading="lazy" alt="Hanging Habagat Status Report #5"></div>
+        <div class="oc-date">Jul 20, 2025 · 1-Hr Turnaround</div>
+        <h4>Hanging Habagat Status Report #5</h4>
+        <p class="oc-desc">Weather update reel on the Southwest Monsoon's effects across communities.</p>
+        <div class="oc-stats"><div><b>9.8K</b>Views</div><div><b>406</b>Reactions</div><div><b>9.2%</b>Reach</div></div>
+        <a href="https://www.facebook.com/reel/1106788454632677" target="_blank" rel="noopener" class="oc-link">Watch Reel →</a>
+      </div>
+      <div class="org-card">
+        <div class="oc-thumb"><img src="assets/thumbs/untv-habagat-3.jpg" loading="lazy" alt="Hanging Habagat Status Report #3"></div>
+        <div class="oc-date">Jul 22, 2025 · 1-Hr Turnaround</div>
+        <h4>Hanging Habagat Status Report #3</h4>
+        <p class="oc-desc">Timely coverage of the Southwest Monsoon's impact on transportation and daily life.</p>
+        <div class="oc-stats"><div><b>8.1K</b>Views</div><div><b>519</b>Reactions</div><div><b>7.6%</b>Reach</div></div>
+        <a href="https://www.facebook.com/reel/1093317386040008" target="_blank" rel="noopener" class="oc-link">Watch Reel →</a>
+      </div>
+      <div class="org-card">
+        <div class="oc-thumb"><img src="assets/thumbs/untv-emong-news-item.jpg" loading="lazy" alt="Typhoon Emong — News Item"></div>
+        <div class="oc-date">Jul 23, 2025 · 1-Hr Turnaround</div>
+        <h4>Typhoon Emong — News Item</h4>
+        <p class="oc-desc">News item covering Typhoon Emong's developments and ongoing rescue operations.</p>
+        <div class="oc-stats"><div><b>5.8K</b>Views</div><div><b>520</b>Reactions</div><div><b>5.5%</b>Reach</div></div>
+        <a href="https://www.facebook.com/reel/1932841010798594" target="_blank" rel="noopener" class="oc-link">Watch Reel →</a>
+      </div>
+      <div class="org-card">
+        <div class="oc-thumb"><img src="assets/thumbs/untv-emong-status.jpg" loading="lazy" alt="Typhoon Emong — Status Report"></div>
+        <div class="oc-date">Jul 24, 2025 · 1-Hr Turnaround</div>
+        <h4>Typhoon Emong — Status Report</h4>
+        <p class="oc-desc">Compilation reel on Typhoon Emong's impact across affected communities.</p>
+        <div class="oc-stats"><div><b>4K</b>Views</div><div><b>361</b>Reactions</div><div>—</div></div>
+        <a href="https://www.facebook.com/reel/590047723977027" target="_blank" rel="noopener" class="oc-link">Watch Reel →</a>
+      </div>
+      <div class="org-card">
+        <div class="oc-thumb"><img src="assets/thumbs/untv-paolo-status.jpg" loading="lazy" alt="Typhoon Paolo — Status Report"></div>
+        <div class="oc-date">1-Hr Turnaround</div>
+        <h4>Typhoon Paolo — Status Report</h4>
+        <p class="oc-desc">Weather coverage reel documenting the effects of Typhoon Paolo and community response.</p>
+        <div class="oc-stats"><div><b>4K</b>Views</div><div><b>186</b>Reactions</div><div><b>3.8%</b>Reach</div></div>
+        <a href="https://www.facebook.com/reel/793477183061457" target="_blank" rel="noopener" class="oc-link">Watch Reel →</a>
+      </div>
+      <div class="org-card">
+        <div class="oc-thumb"><img src="assets/thumbs/untv-habagat-1.jpg" loading="lazy" alt="Hanging Habagat Status Report #1"></div>
+        <div class="oc-date">Jul 22, 2025 · 1-Hr Turnaround</div>
+        <h4>Hanging Habagat Status Report #1</h4>
+        <p class="oc-desc">Compilation reel highlighting flooding and heavy rainfall from the Southwest Monsoon.</p>
+        <div class="oc-stats"><div><b>3.2K</b>Views</div><div><b>157</b>Reactions</div><div><b>3.0%</b>Reach</div></div>
+        <a href="https://www.facebook.com/reel/736425872426456" target="_blank" rel="noopener" class="oc-link">Watch Reel →</a>
+      </div>
+      <div class="org-card">
+        <div class="oc-thumb"><img src="assets/thumbs/untv-habagat-2.jpg" loading="lazy" alt="Hanging Habagat Status Report #2"></div>
+        <div class="oc-date">Jul 22, 2025 · 1-Hr Turnaround</div>
+        <h4>Hanging Habagat Status Report #2</h4>
+        <p class="oc-desc">Weather update reel on the continued Southwest Monsoon effects across affected areas.</p>
+        <div class="oc-stats"><div><b>2K</b>Views</div><div><b>216</b>Reactions</div><div>—</div></div>
+        <a href="https://www.facebook.com/reel/762051556217147" target="_blank" rel="noopener" class="oc-link">Watch Reel →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ORG 3 — The X Trajectory -->
+  <div class="org-section" id="org-xtrajectory">
+    <div class="org-head reveal">
+      <div class="followers">82 Subscribers · YouTube</div>
+      <h2>The X Trajectory</h2>
+      <p>Part-time editor for long-form YouTube content on technology, business, and emerging industries — particularly Tesla and AI. Transformed complex topics into engaging video narratives through retention-focused editing, pacing, and information structuring for a small but growing channel.</p>
+    </div>
+
+    <div class="org-cols reveal">
+      <div>
+        <span class="role-tag">Editor</span>
+        <h3>Role</h3>
+        <p style="color:var(--brown-mid); font-size:17px; line-height:1.6;">Retention-focused editor for research-heavy, long-form videos — helping a small channel repeatedly outperform its own subscriber base.</p>
+      </div>
+      <div>
+        <h3>Responsibilities</h3>
+        <div class="resp-grid">
+          <div class="resp-item">Long-form YouTube storytelling</div>
+          <div class="resp-item">Retention-focused editing</div>
+          <div class="resp-item">Educational &amp; analytical content</div>
+          <div class="resp-item">Technology &amp; business storytelling</div>
+          <div class="resp-item">Visual pacing for complex topics</div>
+          <div class="resp-item">Research-heavy scripts → engaging videos</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="carousel-label">Featured Videos — Highest to Lowest Views</div>
+    <div class="carousel" data-carousel>
+      <div class="org-card">
+        <div class="oc-thumb"><img src="https://img.youtube.com/vi/hCw19h53gw8/hqdefault.jpg" loading="lazy" alt="" onerror="this.remove()"></div>
+        <div class="oc-date">Jul 2026 · 2-Day Turnaround</div>
+        <h4>SpaceX Is Quietly Building an AI Monopoly</h4>
+        <p class="oc-desc">Long-form exploration of SpaceX's role in AI and its potential impact on the tech industry.</p>
+        <div class="oc-stats"><div><b>494</b>Views</div><div><b>602%</b>Reach</div></div>
+        <a href="https://www.youtube.com/watch?v=hCw19h53gw8" target="_blank" rel="noopener" class="oc-link">Watch Video →</a>
+      </div>
+      <div class="org-card">
+        <div class="oc-thumb"><img src="https://img.youtube.com/vi/T8WeJKHcpak/hqdefault.jpg" loading="lazy" alt="" onerror="this.remove()"></div>
+        <div class="oc-date">Jul 2026 · 2-Day Turnaround</div>
+        <h4>What Optimus Is Actually Worth to Tesla's Stock</h4>
+        <p class="oc-desc">Analysis-driven video on Tesla's Optimus robot and its potential business value.</p>
+        <div class="oc-stats"><div><b>403</b>Views</div><div><b>491%</b>Reach</div></div>
+        <a href="https://www.youtube.com/watch?v=T8WeJKHcpak" target="_blank" rel="noopener" class="oc-link">Watch Video →</a>
+      </div>
+      <div class="org-card">
+        <div class="oc-thumb"><img src="https://img.youtube.com/vi/dz3QYHt1VmA/hqdefault.jpg" loading="lazy" alt="" onerror="this.remove()"></div>
+        <div class="oc-date">Jul 2026 · 3-Day Turnaround</div>
+        <h4>Why Elon Wants Tesla Stock Low in 2026</h4>
+        <p class="oc-desc">Business-focused video analyzing Tesla's stock strategy and market positioning.</p>
+        <div class="oc-stats"><div><b>112</b>Views</div><div><b>137%</b>Reach</div></div>
+        <a href="https://www.youtube.com/watch?v=dz3QYHt1VmA" target="_blank" rel="noopener" class="oc-link">Watch Video →</a>
+      </div>
+      <div class="org-card">
+        <div class="oc-thumb"><img src="https://img.youtube.com/vi/Uic_siQIh5Y/hqdefault.jpg" loading="lazy" alt="" onerror="this.remove()"></div>
+        <div class="oc-date">Jul 2026 · 3-Day Turnaround</div>
+        <h4>Tesla's Robotaxi Rollout Is Hiding in Plain Sight</h4>
+        <p class="oc-desc">Technology-focused video exploring Tesla's Robotaxi developments and future implications.</p>
+        <div class="oc-stats"><div><b>88</b>Views</div><div><b>107%</b>Reach</div></div>
+        <a href="https://www.youtube.com/watch?v=Uic_siQIh5Y" target="_blank" rel="noopener" class="oc-link">Watch Video →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ORG 4 — DSWD Pag-abot Program -->
+  <div class="org-section" id="org-dswd">
+    <div class="org-head reveal">
+      <div class="followers">40K Followers · Facebook</div>
+      <h2>DSWD Pag-abot Program</h2>
+      <p>Documentary-style features and educational videos focused on human-interest storytelling, public awareness, and communicating government services — balancing emotional storytelling, public education, and clear communication to present the Pag-abot Program's mission to a wider audience.</p>
+    </div>
+
+    <div class="org-cols reveal">
+      <div>
+        <span class="role-tag">Video Editor</span>
+        <h3>Role</h3>
+        <p style="color:var(--brown-mid); font-size:17px; line-height:1.6;">Editor for documentary and educational content — turning beneficiary stories and program information into content that consistently reached thousands.</p>
+      </div>
+      <div>
+        <h3>Responsibilities</h3>
+        <div class="resp-grid">
+          <div class="resp-item">Documentary &amp; human-interest storytelling</div>
+          <div class="resp-item">Educational content production</div>
+          <div class="resp-item">Government information campaigns</div>
+          <div class="resp-item">Interview-driven storytelling</div>
+          <div class="resp-item">Public awareness videos</div>
+          <div class="resp-item">Cinematic social impact content</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="carousel-label">Featured Videos — Highest to Lowest Views</div>
+    <div class="carousel" data-carousel>
+      <div class="org-card">
+        <div class="oc-thumb"><img src="assets/thumbs/dswd-more-centers.jpg" loading="lazy" alt="Are There More Pag-abot Centers?"></div>
+        <div class="oc-date">2-Day Turnaround</div>
+        <h4>Are There More Pag-abot Centers?</h4>
+        <p class="oc-desc">Educational video on the program's nationwide accessibility and reach.</p>
+        <div class="oc-stats"><div><b>16K</b>Views</div><div><b>709</b>Reactions</div><div><b>40%</b>Reach</div></div>
+        <a href="https://www.facebook.com/reel/2253560502137683" target="_blank" rel="noopener" class="oc-link">Watch Video →</a>
+      </div>
+      <div class="org-card">
+        <div class="oc-thumb"><img src="assets/thumbs/dswd-walk-in.jpg" loading="lazy" alt="Can We Walk In to the Pag-abot Program?"></div>
+        <div class="oc-date">2-Day Turnaround</div>
+        <h4>Can We Walk In to the Pag-abot Program?</h4>
+        <p class="oc-desc">Process-guide video simplifying how beneficiaries can access the program.</p>
+        <div class="oc-stats"><div><b>13K</b>Views</div><div><b>221</b>Reactions</div><div><b>33%</b>Reach</div></div>
+        <a href="https://www.facebook.com/reel/1321545336632667" target="_blank" rel="noopener" class="oc-link">Watch Video →</a>
+      </div>
+      <div class="org-card">
+        <div class="oc-thumb"><img src="assets/thumbs/dswd-kwentong-1.jpg" loading="lazy" alt="Kwentong Pag-abot #1"></div>
+        <div class="oc-date">3-Day Turnaround</div>
+        <h4>Kwentong Pag-abot #1</h4>
+        <p class="oc-desc">Human-interest documentary on a beneficiary's journey from homelessness to reintegration.</p>
+        <div class="oc-stats"><div><b>8.4K</b>Views</div><div><b>245</b>Reactions</div><div><b>21%</b>Reach</div></div>
+        <a href="https://www.facebook.com/reel/1330312468633942" target="_blank" rel="noopener" class="oc-link">Watch Video →</a>
+      </div>
+      <div class="org-card">
+        <div class="oc-thumb"><img src="assets/thumbs/dswd-no-family.jpg" loading="lazy" alt="What Happens If There Is No Receiving Family?"></div>
+        <div class="oc-date">2-Day Turnaround</div>
+        <h4>What Happens If There Is No Receiving Family?</h4>
+        <p class="oc-desc">Educational video explaining intervention for beneficiaries without family support.</p>
+        <div class="oc-stats"><div><b>6.8K</b>Views</div><div><b>136</b>Reactions</div><div><b>17%</b>Reach</div></div>
+        <a href="https://www.facebook.com/reel/886228973958653" target="_blank" rel="noopener" class="oc-link">Watch Video →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ADDITIONAL WORKS ============ -->
+<section id="additional-works">
+  <div class="section-head reveal">
+    <div class="eyebrow">More Work</div>
+    <h2>Additional Works</h2>
+    <p>Beyond the flagship reels — volunteer broadcast projects, produced school shows, and cinematic real estate work.</p>
+  </div>
+
+<div id="school-projects">
+  <div class="subhead-major reveal">
+    <h3>School Projects</h3>
+    <p>Volunteer broadcast work and produced shows from La Verdad Christian College — spanning morning-show segments, musicals, and campus AVPs.</p>
+  </div>
+
+  <div class="subhead reveal">
+    <h3>La Verdad Volunteer Works</h3>
+    <div class="line"></div>
+  </div>
+  <div class="vid-grid">
+    <a class="vid-chip reveal" href="https://drive.google.com/file/d/1Es0xcgk3bU1AANyttahmOhhVCEk2F6s5/view?usp=drive_link" target="_blank" rel="noopener">
+      <div class="vp"><img src="https://drive.google.com/thumbnail?id=1Es0xcgk3bU1AANyttahmOhhVCEk2F6s5&sz=w200" loading="lazy" alt="" onerror="this.remove()"></div><div class="vt">Student Reporter News "Acting Workshop"<small>03.06.25 — FB Release</small></div>
+    </a>
+    <a class="vid-chip reveal" href="https://drive.google.com/file/d/1IJGIMPskRKT8HG_U3yVLxt6KpMNA-8nV/view?usp=drive_link" target="_blank" rel="noopener">
+      <div class="vp"><img src="https://drive.google.com/thumbnail?id=1IJGIMPskRKT8HG_U3yVLxt6KpMNA-8nV&sz=w200" loading="lazy" alt="" onerror="this.remove()"></div><div class="vt">Story of my Faith "Sir Emmanuel Sirug"<small>Handbreak Cut</small></div>
+    </a>
+    <a class="vid-chip reveal" href="https://drive.google.com/file/d/1_mRsXp12NK9X-DmwNmTdeJQSIechtgfP/view?usp=drive_link" target="_blank" rel="noopener">
+      <div class="vp"><img src="https://drive.google.com/thumbnail?id=1_mRsXp12NK9X-DmwNmTdeJQSIechtgfP&sz=w200" loading="lazy" alt="" onerror="this.remove()"></div><div class="vt">La Verdad President's Day 2026<small>General AVP</small></div>
+    </a>
+    <a class="vid-chip reveal" href="https://drive.google.com/file/d/1dS1V7JcdkRpoqaaTxBhV7_DJ1NgbNZWw/view?usp=drive_link" target="_blank" rel="noopener">
+      <div class="vp"><img src="https://drive.google.com/thumbnail?id=1dS1V7JcdkRpoqaaTxBhV7_DJ1NgbNZWw&sz=w200" loading="lazy" alt="" onerror="this.remove()"></div><div class="vt">Foundation Week 2026 "Sitio Manibukyot"<small>Handbreak Cut</small></div>
+    </a>
+    <a class="vid-chip reveal" href="https://drive.google.com/file/d/15P-EsX5NbCX5fhPq184fM4bWbxHgIWT7/view?usp=drive_link" target="_blank" rel="noopener">
+      <div class="vp"><img src="https://drive.google.com/thumbnail?id=15P-EsX5NbCX5fhPq184fM4bWbxHgIWT7&sz=w200" loading="lazy" alt="" onerror="this.remove()"></div><div class="vt">Foundation Week 2025 Day 1<small>Campus AVP</small></div>
+    </a>
+    <a class="vid-chip reveal" href="https://drive.google.com/file/d/12Xo1hEuhhUrZUkefo8Q8nVTtjQBGWMDw/view?usp=drive_link" target="_blank" rel="noopener">
+      <div class="vp"><img src="https://drive.google.com/thumbnail?id=12Xo1hEuhhUrZUkefo8Q8nVTtjQBGWMDw&sz=w200" loading="lazy" alt="" onerror="this.remove()"></div><div class="vt">Foundation Week Musical Play 2025 Behind the Scenes<small>03.18.25 — DMS</small></div>
+    </a>
+  </div>
+
+  <div class="subhead reveal">
+    <h3>Morning with the Ligayas</h3>
+    <div class="line"></div>
+  </div>
+  <div class="proj-block">
+    <div class="reveal">
+      <div class="role">Role: Editor / Director</div>
+      <h4>Morning with the Ligayas</h4>
+      <p>A family-oriented morning show featuring engaging segments on cooking, crafts, learning, adventure, and health — offering something for every member of the family.</p>
+    </div>
+    <div class="proj-videos reveal">
+      <a class="vid-chip" href="https://drive.google.com/file/d/1BlPZnABnjLwbDBPU6k8hyG61SXnB0Kte/view?usp=drive_link" target="_blank" rel="noopener">
+        <div class="vp"><img src="https://drive.google.com/thumbnail?id=1BlPZnABnjLwbDBPU6k8hyG61SXnB0Kte&sz=w200" loading="lazy" alt="" onerror="this.remove()"></div><div class="vt">Morning with the Ligayas<small>Volume 1</small></div>
+      </a>
+      <a class="vid-chip" href="https://drive.google.com/file/d/1k6yF4_p3xjoyOU-ksWC6ap6t58A0nVj2/view?usp=drive_link" target="_blank" rel="noopener">
+        <div class="vp"><img src="https://drive.google.com/thumbnail?id=1k6yF4_p3xjoyOU-ksWC6ap6t58A0nVj2&sz=w200" loading="lazy" alt="" onerror="this.remove()"></div><div class="vt">Let See Eat!<small>Round 2, Volume 1</small></div>
+      </a>
+    </div>
+  </div>
+
+  <div class="subhead reveal">
+    <h3>Tindahan ni Aleng Nena</h3>
+    <div class="line"></div>
+  </div>
+  <div class="proj-block">
+    <div class="reveal">
+      <div class="role">Role: Editor</div>
+      <h4>Tindahan ni Aleng Nena</h4>
+      <p>A heartfelt musical weaving together three stories of love, loss, and resilience — a reminder that no matter what life brings, it always moves forward, and so can we.</p>
+    </div>
+    <div class="proj-videos reveal">
+      <a class="vid-chip" href="https://drive.google.com/file/d/1b8_PpkygW0arR4I1HzL3AAMOirmn30xf/view?usp=drive_link" target="_blank" rel="noopener">
+        <div class="vp"><img src="https://drive.google.com/thumbnail?id=1b8_PpkygW0arR4I1HzL3AAMOirmn30xf&sz=w200" loading="lazy" alt="" onerror="this.remove()"></div><div class="vt">30's Teaser — Part 1<small>Round 1, Volume 5</small></div>
+      </a>
+      <a class="vid-chip" href="https://drive.google.com/file/d/1EB0K2L8lpi-KYjz_HIrBILLp-Regl4wo/view?usp=drive_link" target="_blank" rel="noopener">
+        <div class="vp"><img src="https://drive.google.com/thumbnail?id=1EB0K2L8lpi-KYjz_HIrBILLp-Regl4wo&sz=w200" loading="lazy" alt="" onerror="this.remove()"></div><div class="vt">30's Teaser — Part 2<small>Round 1, Volume 2</small></div>
+      </a>
+    </div>
+  </div>
+</div>
+
+  <div class="section-divider"></div>
+
+<div id="real-estate">
+  <div class="subhead-major reveal">
+    <h3>Real Estate Projects</h3>
+    <p>A curated collection of cinematic real estate videos designed to showcase properties with clarity, emotion, and impact.</p>
+  </div>
+  <div class="proj-block">
+    <div class="reveal">
+      <div class="role">Role: Editor</div>
+      <h4>Property Showcases</h4>
+      <p>A curated collection of cinematic real estate videos designed to showcase properties with clarity, emotion, and impact.</p>
+    </div>
+    <div class="proj-videos reveal">
+      <a class="vid-chip" href="https://drive.google.com/file/d/1HK5lDuPhLxmtNS5U_bzj-eD9XRNlj2qf/view?usp=drive_link" target="_blank" rel="noopener">
+        <div class="vp"><img src="https://drive.google.com/thumbnail?id=1HK5lDuPhLxmtNS5U_bzj-eD9XRNlj2qf&sz=w200" loading="lazy" alt="" onerror="this.remove()"></div><div class="vt">Private Education Assistance Committee<small>La Verdad Building Showcase</small></div>
+      </a>
+      <a class="vid-chip" href="https://drive.google.com/file/d/1k6wKVBciYMF35IHXZmptjI2J3NbRnSOv/view" target="_blank" rel="noopener">
+        <div class="vp"><img src="https://drive.google.com/thumbnail?id=1k6wKVBciYMF35IHXZmptjI2J3NbRnSOv&sz=w200" loading="lazy" alt="" onerror="this.remove()"></div><div class="vt">SMV Family Crib<small>Property Tour</small></div>
+      </a>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ============ ABOUT ============ -->
+<section id="about">
+  <div class="section-head reveal">
+    <div class="eyebrow">About</div>
+    <h2>Behind the Cut</h2>
+  </div>
+  <div class="about-wrap">
+    <div class="about-grid">
+      <div class="about-item reveal">
+        <span class="idx">01</span>
+        <h3>Vision</h3>
+        <p>Every frame tells a story. My work bridges the gap between raw footage and cinematic excellence, transforming moments into lasting visual narratives.</p>
+      </div>
+      <div class="about-item reveal">
+        <span class="idx">02</span>
+        <h3>Craft</h3>
+        <p>BA in Broadcasting from La Verdad Christian College. Experience spans documentary features, breaking-news turnarounds, broadcast television, and long-form narrative — with a meticulous approach from research to final color.</p>
+      </div>
+      <div class="about-item reveal">
+        <span class="idx">03</span>
+        <h3>Impact</h3>
+        <p>Recognized at national film festivals, trusted across newsrooms, government programs, and independent channels — work that consistently reaches beyond the existing audience it was made for.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ EXPERIENCE ============ -->
+<section id="experience">
+  <div class="section-head reveal">
+    <div class="eyebrow">Experience</div>
+    <h2>Production Timeline</h2>
+    <p>A path through broadcast production, documentary filmmaking, and creative leadership.</p>
+  </div>
+  <div class="timeline">
+
+    <div class="t-row">
+      <div class="t-line"><div><div class="t-dot"></div><div class="t-date">June 2026 – Present</div></div></div>
+      <div class="t-card reveal">
+        <h3>Project Development Officer II</h3>
+        <div class="org">Department of Social Welfare and Development (DSWD)</div>
+        <div class="place">Sole point person for departmental video output</div>
+        <p>Own end-to-end content development for the department — concept, shooting direction, editing, and release. Content produced averages over 10,000 views within 5 days of release, a 150% increase over prior departmental content, across 8 releases to date.</p>
+      </div>
+    </div>
+
+    <div class="t-row">
+      <div class="t-line"><div><div class="t-dot"></div><div class="t-date">SY 2025–2026</div></div></div>
+      <div class="t-card reveal">
+        <h3>Vice President – External</h3>
+        <div class="org">IMEX Club — Broadcasting Society</div>
+        <div class="place">La Verdad Christian College · Member, 2022–2025</div>
+        <p>Leading external relations and strategic partnerships for the college's broadcasting organization.</p>
+      </div>
+    </div>
+
+    <div class="t-row">
+      <div class="t-line"><div><div class="t-dot"></div><div class="t-date">SY 2025–2026</div></div></div>
+      <div class="t-card reveal">
+        <h3>Vice President</h3>
+        <div class="org">Coro de La Verdad</div>
+        <div class="place">La Verdad Christian College · Member, 2022–2025</div>
+        <p>Managing operations and creative direction for the college's vocal ensemble.</p>
+      </div>
+    </div>
+
+    <div class="t-row">
+      <div class="t-line"><div><div class="t-dot"></div><div class="t-date">2025</div></div></div>
+      <div class="t-card reveal">
+        <h3>Volunteer Video Editor</h3>
+        <div class="org">UNTV — Rescue Summit 2025 &amp; REPASO 2025</div>
+        <div class="place">National broadcast, live rescue &amp; disaster-response coverage</div>
+        <p>Edited time-sensitive national broadcast segments — 22 edited segments delivered under 4-hour turnaround windows to meet live broadcast deadlines, reaching an estimated 8K viewers.</p>
+      </div>
+    </div>
+
+    <div class="t-row">
+      <div class="t-line"><div><div class="t-dot"></div><div class="t-date">2025</div></div></div>
+      <div class="t-card reveal">
+        <h3>Master Editor</h3>
+        <div class="org">Autumn Productions — "Metapora", Ika-36 CCP Gawad Alternatibo</div>
+        <div class="place">Cultural Center of the Philippines</div>
+        <p>Owned post-production end-to-end — structural pacing, sound design, and color — shaping a cut that advanced the film to Finalist, Narrative Film, against a national field of 450 entries.</p>
+      </div>
+    </div>
+
+    <div class="t-row">
+      <div class="t-line"><div><div class="t-dot"></div><div class="t-date">2025</div></div></div>
+      <div class="t-card reveal">
+        <h3>Assistant Director / Researcher &amp; Logistics</h3>
+        <div class="org">Thelko Production — "Bawat Puwang", NCCT Dokyubata 2025</div>
+        <div class="place">National Council for Children's Television</div>
+        <p>Assisted direction and led research and field logistics — story development that contributed to a Finalist nomination for Best Story among 143 entries nationally.</p>
+      </div>
+    </div>
+
+    <div class="t-row">
+      <div class="t-line"><div><div class="t-dot"></div><div class="t-date">SY 2022–2026</div></div></div>
+      <div class="t-card reveal">
+        <h3>Video Editor</h3>
+        <div class="org">La Verdad Christian College Broadcasting Society</div>
+        <div class="place">Four consecutive school years</div>
+        <p>Edited reels, documentaries, audiovisual presentations, and promotional materials as the Society's working editor — 20+ pieces of content reaching an estimated 10K students and stakeholders.</p>
+      </div>
+    </div>
+
+    <div class="t-row">
+      <div class="t-line"><div><div class="t-dot"></div><div class="t-date">2022–2025</div></div></div>
+      <div class="t-card reveal">
+        <h3>Assistant Director / Researcher</h3>
+        <div class="org">Thelko Productions</div>
+        <div class="place">La Verdad Christian College — Apalit</div>
+        <p>Contributed direction and research support across the production team's ongoing projects.</p>
+      </div>
+    </div>
+
+    <div class="t-row">
+      <div class="t-line"><div><div class="t-dot"></div><div class="t-date">2022</div></div></div>
+      <div class="t-card reveal">
+        <h3>Researcher &amp; Logistics</h3>
+        <div class="org">Thelko Production — "Ing Sulat Para Karing Ma Bie", NCCT Dokyubata 2022</div>
+        <div class="place">National Council for Children's Television</div>
+        <p>Handled research and on-ground production logistics for a children's documentary — supported a process that placed the film in the national Top 15 out of 145 entries.</p>
+      </div>
+    </div>
+
+    <div class="t-row">
+      <div class="t-line"><div><div class="t-dot"></div><div class="t-date">2017–2026</div></div></div>
+      <div class="t-card reveal" style="margin-bottom:0;">
+        <h3>Bachelor of Arts in Broadcasting</h3>
+        <div class="org">La Verdad Christian College — Graduated May 2026</div>
+        <div class="place">Baguio City National High School, General Academic Strand — 2017–2021</div>
+        <p>Best Researcher, Broadcasting Program.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ AWARDS ============ -->
+<section id="awards">
+  <div class="section-head reveal">
+    <div class="eyebrow">Recognition</div>
+    <h2>Awards &amp; Selections</h2>
+  </div>
+  <div class="awards">
+    <div class="award-card reveal">
+      <div>
+        <div class="yr">NCCT Dokyubata 2025</div>
+        <h3>Finalist — Best Story</h3>
+      </div>
+      <p>"Bawat Puwang," a documentary exploring the physical and emotional spaces of contemporary Filipino life, produced with Thelko Production. Finalist for Best Story among 143 entries nationally. Role: Assistant Director, Researcher &amp; Logistics.</p>
+      <a href="https://drive.google.com/file/d/1YxIvrI7GfT8UsrP6jmVsfdfAdv9J8g_D/view" target="_blank" rel="noopener" class="award-link">Watch Film →</a>
+    </div>
+    <div class="award-card reveal">
+      <div>
+        <div class="yr">Ika-36 CCP Gawad Alternatibo</div>
+        <h3>Finalist — Narrative Film</h3>
+      </div>
+      <p>"METAPORA," a narrative short produced with Autumn Productions. Advanced to Finalist, Narrative Film, against a national field of 450 entries. Role: Master Editor.</p>
+      <a href="https://drive.google.com/file/d/1DXtEKEsXRxyyOv7FswPJWIBjqGJdYWnp/view" target="_blank" rel="noopener" class="award-link">Watch Film →</a>
+    </div>
+    <div class="award-card reveal">
+      <div>
+        <div class="yr">PACE 50 · Philippine Association of Communication Educators, 2025</div>
+        <h3>Presenter — Art Angel &amp; Hi-5</h3>
+      </div>
+      <p>Presented on children's television at the PACE 50 Communication and Media Studies Conference / PACE of the Future Student Camp, to an audience of 500+ educators and students.</p>
+      <a href="https://www.facebook.com/share/p/17xfvPSeuU/" target="_blank" rel="noopener" class="award-link">View Post →</a>
+    </div>
+    <div class="award-card reveal">
+      <div>
+        <div class="yr">International Research and Innovation Summit · First City Providential College, 2026</div>
+        <h3>Presenter — Challenges of Disinformation</h3>
+      </div>
+      <p>"Residents' Ability to Navigate Manipulated Media Using the Explore, Engage and Empower Model in Purok 2, Apalit, Barangay Sampaloc, Pampanga."</p>
+      <a href="https://www.facebook.com/share/p/1BejB5a8vp/" target="_blank" rel="noopener" class="award-link">View Post →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CAPABILITIES ============ -->
+<section id="capabilities">
+  <div class="section-head reveal">
+    <div class="eyebrow">Skill Set</div>
+    <h2>Capabilities</h2>
+    <p>A comprehensive skill set spanning the entire production pipeline, from concept to final delivery.</p>
+  </div>
+  <div class="caps">
+    <div class="caps-col reveal">
+      <div class="idx">01</div>
+      <h3>Post-Production Mastery</h3>
+      <ul>
+        <li>Adobe Premiere Pro</li>
+        <li>DaVinci Resolve</li>
+        <li>After Effects</li>
+        <li>CapCut</li>
+        <li>Color Grading &amp; Correction</li>
+        <li>Audio Mixing &amp; Sound Design</li>
+      </ul>
+    </div>
+    <div class="caps-col reveal">
+      <div class="idx">02</div>
+      <h3>Production Excellence</h3>
+      <ul>
+        <li>Camera Operation &amp; Shooting</li>
+        <li>Film Direction</li>
+        <li>Documentary Filmmaking</li>
+        <li>Broadcast Production</li>
+        <li>Research &amp; Logistics</li>
+        <li>Team &amp; Production Management</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTACT ============ -->
+<section id="contact">
+  <div class="contact">
+    <div class="contact-left reveal">
+      <div class="eyebrow" style="margin-bottom:16px;">Let's Create</div>
+      <h2>Let's Create</h2>
+      <p>Ready to bring your story to life? Let's discuss your next project and create something exceptional together.</p>
+      <div class="contact-item">
+        <div class="ico">@</div>
+        <div><div class="lbl">Email</div><div class="val">pinlac111@gmail.com</div></div>
+      </div>
+      <div class="contact-item">
+        <div class="ico">☎</div>
+        <div><div class="lbl">Phone</div><div class="val">+63 966-623-2119</div></div>
+      </div>
+      <div class="contact-item">
+        <div class="ico">📍</div>
+        <div><div class="lbl">Location</div><div class="val">Sampaloc, Apalit, Pampanga, Philippines</div></div>
+      </div>
+    </div>
+    <div class="contact-right reveal">
+      <h3>Ready to start your project?</h3>
+      <p>From concept to final cut, let's create something extraordinary.</p>
+      <a href="mailto:pinlac111@gmail.com" class="cta-btn">Get in Touch →</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div>© 2026 Marc Gabriel Pinlac. All rights reserved.</div>
+  <a href="https://facebook.com/marcgabriel.pinlac" target="_blank" rel="noopener" class="connect-btn">Facebook ↗</a>
+</footer>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+
+<script>
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- Lenis smooth scroll ---------- */
+let lenis;
+if(!reduceMotion && window.Lenis){
+  lenis = new Lenis({ duration: 1.15, easing: t => 1 - Math.pow(1 - t, 3) });
+  function raf(time){ lenis.raf(time); requestAnimationFrame(raf); }
+  requestAnimationFrame(raf);
+  lenis.on('scroll', ScrollTrigger.update);
+  gsap.ticker.add((time)=>{ lenis.raf(time*1000); });
+  gsap.ticker.lagSmoothing(0);
+}
+
+gsap.registerPlugin(ScrollTrigger);
+
+/* ---------- Scroll progress bar ---------- */
+gsap.to("#progressBar", {
+  width: "100%",
+  ease: "none",
+  scrollTrigger: { trigger: document.body, start: "top top", end: "bottom bottom", scrub: 0.3 }
+});
+
+/* ---------- Nav solid background on hero exit (fixes sticky-tab gap) ---------- */
+ScrollTrigger.create({
+  trigger: "#portfolio-projects",
+  start: "top top",
+  onEnter: () => document.querySelector('nav').classList.add('nav-scrolled'),
+  onLeaveBack: () => document.querySelector('nav').classList.remove('nav-scrolled')
+});
+
+/* ---------- Hero marquee ---------- */
+if(!reduceMotion){
+  gsap.to("#marquee", { xPercent: -50, duration: 22, ease: "none", repeat: -1 });
+  gsap.to("#marquee", {
+    x: "-15%",
+    scrollTrigger: { trigger: "#hero", start: "top top", end: "bottom top", scrub: true }
+  });
+  gsap.to(".hero-inner", {
+    yPercent: -30, opacity: 0.15, scale: 0.92,
+    scrollTrigger: { trigger: "#hero", start: "top top", end: "bottom top", scrub: true }
+  });
+} else {
+  document.getElementById('marquee').style.transform = 'translateX(-25%)';
+}
+
+/* ---------- Generic reveal ---------- */
+gsap.utils.toArray('.reveal').forEach(el=>{
+  gsap.fromTo(el, {opacity:0, y:40}, {
+    opacity:1, y:0, duration:1, ease:"power3.out",
+    scrollTrigger:{ trigger: el, start:"top 85%" }
+  });
+});
+
+/* ---------- Timeline line draw ---------- */
+gsap.utils.toArray('.t-line').forEach(line=>{
+  const before = line;
+  gsap.fromTo(before, {opacity:0.2},{opacity:1, scrollTrigger:{trigger:line, start:"top 80%", end:"bottom 60%", scrub:true}});
+});
+
+/* ---------- Three.js ambient particles in hero ---------- */
+if(!reduceMotion && window.THREE){
+  const canvas = document.getElementById('hero-canvas');
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha:true, antialias:true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(55, window.innerWidth/window.innerHeight, 0.1, 100);
+  camera.position.z = 8;
+
+  const count = window.innerWidth < 700 ? 120 : 260;
+  const geo = new THREE.BufferGeometry();
+  const positions = new Float32Array(count*3);
+  for(let i=0;i<count;i++){
+    positions[i*3] = (Math.random()-0.5)*16;
+    positions[i*3+1] = (Math.random()-0.5)*10;
+    positions[i*3+2] = (Math.random()-0.5)*10;
+  }
+  geo.setAttribute('position', new THREE.BufferAttribute(positions,3));
+  const mat = new THREE.PointsMaterial({ color: 0xC89B6C, size: 0.045, transparent:true, opacity:0.55 });
+  const points = new THREE.Points(geo, mat);
+  scene.add(points);
+
+  let mouseX=0, mouseY=0;
+  window.addEventListener('mousemove', e=>{
+    mouseX = (e.clientX/window.innerWidth - 0.5);
+    mouseY = (e.clientY/window.innerHeight - 0.5);
+  });
+
+  function animate(){
+    requestAnimationFrame(animate);
+    points.rotation.y += 0.0009;
+    points.rotation.x += 0.0003;
+    camera.position.x += (mouseX*0.6 - camera.position.x)*0.02;
+    camera.position.y += (-mouseY*0.4 - camera.position.y)*0.02;
+    camera.lookAt(scene.position);
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  window.addEventListener('resize', ()=>{
+    camera.aspect = window.innerWidth/window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+}
+
+/* smooth-scroll for nav anchors */
+document.querySelectorAll('nav a[href^="#"]').forEach(a=>{
+  a.addEventListener('click', e=>{
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if(target){
+      if(lenis) lenis.scrollTo(target, { offset:-40 });
+      else target.scrollIntoView({behavior:'smooth'});
+    }
+  });
+});
+
+/* ---------- Org pills: smooth scroll + active scroll-spy ---------- */
+const orgPills = document.querySelectorAll('.org-pill');
+const orgSections = ['org-laverdad','org-untv','org-xtrajectory','org-dswd']
+  .map(id => document.getElementById(id)).filter(Boolean);
+
+orgPills.forEach(pill=>{
+  pill.addEventListener('click', e=>{
+    e.preventDefault();
+    const target = document.querySelector(pill.getAttribute('href'));
+    if(target){
+      const offset = -(document.querySelector('.org-nav-wrap').offsetHeight + 20);
+      if(lenis) lenis.scrollTo(target, { offset });
+      else target.scrollIntoView({behavior:'smooth'});
+    }
+  });
+});
+
+orgSections.forEach(sec=>{
+  ScrollTrigger.create({
+    trigger: sec,
+    start: "top 40%",
+    end: "bottom 40%",
+    onEnter: () => setActivePill(sec.id),
+    onEnterBack: () => setActivePill(sec.id)
+  });
+});
+function setActivePill(id){
+  orgPills.forEach(p => p.classList.toggle('active', p.dataset.org === id));
+}
+
+/* ---------- Horizontal carousels: mouse-drag support ---------- */
+document.querySelectorAll('[data-carousel]').forEach(track=>{
+  let isDown=false, startX=0, scrollLeft=0, moved=false;
+  track.addEventListener('mousedown', e=>{
+    isDown=true; moved=false; track.classList.add('dragging');
+    startX = e.pageX - track.offsetLeft; scrollLeft = track.scrollLeft;
+  });
+  window.addEventListener('mouseup', ()=>{ isDown=false; track.classList.remove('dragging'); });
+  track.addEventListener('mouseleave', ()=>{ isDown=false; track.classList.remove('dragging'); });
+  track.addEventListener('mousemove', e=>{
+    if(!isDown) return;
+    e.preventDefault();
+    const x = e.pageX - track.offsetLeft;
+    const walk = (x - startX);
+    if(Math.abs(walk) > 5) moved = true;
+    track.scrollLeft = scrollLeft - walk;
+  });
+  // prevent link click firing right after a drag
+  track.querySelectorAll('a').forEach(a=>{
+    a.addEventListener('click', e=>{ if(moved) e.preventDefault(); });
+  });
+});
+</script>
+</body>
+</html>
